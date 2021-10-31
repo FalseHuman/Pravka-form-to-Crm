@@ -353,8 +353,9 @@
 		let first_name_patronomic = [result[1].split(' ', 1).toString(), result[1].split(' ').slice(1).join(' ')];
 
 		dict['last_name'] = last_name,
-			dict['first_name'] = first_name_patronomic[0],
-			dict['patronymic'] = first_name_patronomic[1]
+		dict['first_name'] = first_name_patronomic[0],
+		dict['patronymic'] = first_name_patronomic[1]
+		console.log(dict)
 		$.ajax({
 			type: 'GET',
 			url: 'http://localhost:8001/spider/', //https://crm.pravkaatlanta.ru/spider/
@@ -364,12 +365,13 @@
 			contentType: false
 		}).done(function (data, status, xhr) {
 			data.invalidFields = []
-			for (let i in data.errors) {
+			if (data.form !== null) {
+			for (let i in data.form.errors) {
 				if (i === 'last_name' || i === 'first_name' || i === 'patronymic') {
 					data.invalidFields.push(
 						{
 							"into": "span.wpcf7-form-control-wrap.flp",
-							"message": data.errors[i].toString(),
+							"message": data.form.errors[i].toString(),
 							"idref": null
 
 						})
@@ -377,12 +379,13 @@
 					data.invalidFields.push(
 						{
 							"into": "span.wpcf7-form-control-wrap." + i,
-							"message": data.errors[i].toString(),
+							"message": data.form.errors[i].toString(),
 							"idref": null
 						}
 					)
 				}
 			}
+		    }
 			ajaxSuccess(data, status, xhr, $form);
 			$('.ajax-loader', $form).removeClass('is-active');
 		}).fail(function (xhr, status, error) {
